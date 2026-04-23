@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 import time
 
 from langchain_ollama import ChatOllama
@@ -5,20 +6,21 @@ from langchain_ollama import ChatOllama
 from loaders.retrieval import Retriever
 
 def main():
-    retrieval_model = "bge-m3:latest"
     generation_model = "qwen3.5:9b"
 
-    preload_pdf_dirpath = "./dev/pdf"
+    parser = ArgumentParser()
+    parser.add_argument("--preload", type=str, required=True)
+    args = parser.parse_args()
     
-    retriever = Retriever(model=retrieval_model,
-                          preload_pdf_dirpath=preload_pdf_dirpath)
+    retriever = Retriever(preload_pdf_dirpath=args.preload,
+                          cleanup_on_init=True)
     time.sleep(1.0)
 
     while True:
         print("\nSearch:")
         query = input("> ")
 
-        results = retriever.search(query)
+        results = retriever.search(query, using="hybrid")
         for i, result in enumerate(results):
             print(f"-------------- Document {i+1} --------------\n\n")
             print(f"File: {result.source}\n\nContent:\n{result.context}\n\n")
