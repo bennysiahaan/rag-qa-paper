@@ -3,18 +3,19 @@ import uuid
 from pathlib import Path
 
 from fastembed import SparseTextEmbedding
+from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.readers.file import PDFReader
 from ollama._types import ResponseError
 from qdrant_client.models import SparseVector
 
-from .custom_types import RAGChunkAndSrc, RAGSearchResult
+from .custom_types import RAGChunkAndSrc
 from .storage import QdrantStorage
 
 class Retriever:
     def __init__(self,
-                 top_k: int = 5,
+                 top_k: int = 60,
                  chunk_size: int = 1000,
                  chunk_overlap: int = 200,
                  storage_url: str = "http://localhost:6333",
@@ -98,39 +99,49 @@ class Retriever:
         out = self.storage.upsert(ids, sparse_vectors, dense_vectors, payloads)
         return out
     
-    def search_sparse(self, query: str):
+    def search_sparse(self, query: str) -> list[Document]:
         sparse_embedding = next(iter(self.sparse_embed.embed([query])))
         query_vector = SparseVector(indices=sparse_embedding.indices.tolist(),
                                     values=sparse_embedding.values.tolist())
         docs = self.storage.query_single(query_vector, self.top_k, "sparse")
-        result = [RAGSearchResult(context=doc["context"], source=doc["source"])
-                  for doc in docs]
+        result = [Document(page_content=doc["context"],
+                           metadata={"source": doc["source"]})
+                           for doc in docs]
         return result
     
-    def search_dense(self, query: str):
+    def search_dense(self, query: str) -> list[Document]:
         query_vector = self.dense_embed.embed_query(query)
         docs = self.storage.query_single(query_vector, self.top_k, "dense")
-        result = [RAGSearchResult(context=doc["context"], source=doc["source"])
-                  for doc in docs]
+        result = [Document(page_content=doc["context"],
+                           metadata={"source": doc["source"]})
+                           for doc in docs]
         return result
     
-    def search_hybrid(self, query: str):
+    def search_hybrid(self,
+                      query: str,
+                      prefetch_limit: int) -> list[Document]:
         sparse_embedding = next(iter(self.sparse_embed.embed([query])))
         sparse_vector = SparseVector(indices=sparse_embedding.indices.tolist(),
                                     values=sparse_embedding.values.tolist())
         
         dense_vector = self.dense_embed.embed_query(query)
 
-        docs = self.storage.query_rrf(sparse_vector,
-                                      dense_vector)
-        result = [RAGSearchResult(context=doc["context"], source=doc["source"])
-                  for doc in docs]
+        docs = self.storage.query_rrf(sparse_vector=sparse_vector,
+                                      dense_vector=dense_vector,
+                                      limit=self.top_k,
+                                      prefetch_limit=prefetch_limit)
+        result = [Document(page_content=doc["context"],
+                           metadata={"source": doc["source"]})
+                           for doc in docs]
         return result
     
-    def search(self, query: str, using: str = "dense"):
+    def search(self,
+               query: str,
+               using: str = "dense",
+               prefetch_limit: int = 200):
         if using.lower() == "sparse":
             return self.search_sparse(query)
         if using.lower() == "hybrid":
-            return self.search_hybrid(query)
+            return self.search_hybrid(query, prefetch_limit=prefetch_limit)
         return self.search_dense(query)
     

@@ -1,3 +1,4 @@
+from langchain_core.documents import Document
 import pydantic
 
 class RAGChunkAndSrc(pydantic.BaseModel):
@@ -12,3 +13,7 @@ class RAGUpsertEntry(pydantic.BaseModel):
 class RAGSearchResult(pydantic.BaseModel):
     context: str
     source: str
+
+    @classmethod
+    def to_document(cls) -> Document:
+        return Document(page_content=cls.context, metadata={"source": cls.source})

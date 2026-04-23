@@ -89,8 +89,8 @@ class QdrantStorage:
     def query_rrf(self,
                   sparse_vector: SparseVector,
                   dense_vector: list[float],
-                  limit: int = 20,
-                  prefetch_limit: int = 100):
+                  limit: int,
+                  prefetch_limit: int):
         response = self._client.query_points(
             collection_name=self.collection,
             prefetch=[
