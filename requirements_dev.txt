@@ -1,0 +1,11 @@
+fastapi
+langchain[llms]
+langchain-openai
+langchain-ollama
+openai
+dotenv
+uvicorn
+qdrant-client
+llama-index-core
+llama-index-readers-file
+pydantic
