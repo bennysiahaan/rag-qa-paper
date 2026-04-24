@@ -19,9 +19,9 @@ A RAG for question answering task that runs on local machine. It ingests and und
   ```bash
   $ docker compose up -d
   ```
-- Run by providing the directory path to the desired `.pdf` files to ingest.
+- Run via:
   ```bash
-  $ python main.py --preload <path_to_the_directory>
+  $ python main.py
   ```
 
 ## Command arguments
@@ -31,3 +31,4 @@ A RAG for question answering task that runs on local machine. It ingests and und
 |`--cleanup_on_init` | Remove all document chunks in Qdrant storage on startup. |
 |`--top_k` | The number of documents to retrieve as context. |
 |`--prefetch_limit` | The number of documents to retrieve from the storage. |
+|`--markdown` | Optionally use markdown file as prompt. |
