@@ -10,7 +10,7 @@ class Generator:
         # self.model = "qwen2.5:7b"
         self.model = "llama3.1:8b"
         self.system_template = (
-            "You are a helpful assistant that who answers truthfully based on"
+            "You are a helpful assistant who answers truthfully based on"
             " the retrieved documents. You have to say that you do not know if"
             " you cannot find the factual and proven answer from the documents."
         )
