@@ -4,11 +4,14 @@ from langchain_ollama import ChatOllama
 
 class Generator:
     def __init__(self,
+                 num_ctx: int = 4096 * 8,
                  temperature: float = 0.0):
         # self.model = "qwen3.5:9b"
         # self.model = "qwen2.5:3b"
         # self.model = "qwen2.5:7b"
-        self.model = "llama3.1:8b"
+        # self.model = "llama3.1:8b"
+        # self.model = "phi4-mini"
+        self.model = "gemma3:4b"
         self.system_template = (
             "You are a helpful assistant who answers truthfully based on"
             " the retrieved documents. You have to say that you do not know if"
@@ -17,6 +20,7 @@ class Generator:
         self.system_template_with_context = self.system_template + "\n\nDocuments:\n{context}"
         self.human_template = "{text}"
         self.chat_model = ChatOllama(model=self.model,
+                                     num_ctx=num_ctx,
                                      temperature=temperature)
         
         self.prompt = ChatPromptTemplate.from_messages([

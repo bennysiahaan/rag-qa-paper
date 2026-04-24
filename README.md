@@ -27,8 +27,10 @@ A RAG for question answering task that runs on local machine. It ingests and und
 ## Command arguments
 | Argument | Description |
 |----------|-------------|
+|`--mode` | Mode to run. `--mode rag` for RAG mode. `chat` is the default mode (non-RAG). |
 |`--preload` | Provide the directory path to `.pdf` files to ingest. |
 |`--cleanup_on_init` | Remove all document chunks in Qdrant storage on startup. |
 |`--top_k` | The number of documents to retrieve as context. |
 |`--prefetch_limit` | The number of documents to retrieve from the storage. |
-|`--markdown` | Optionally use markdown file as prompt. |
+|`--markdown` | Optionally use markdown file as prompt. Note that this overrides `--mode` and sets it to `rag`. |
+|`--num_ctx` | Set the maximum size of the context window. |
