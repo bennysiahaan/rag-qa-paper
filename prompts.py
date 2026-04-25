@@ -5,6 +5,7 @@ from loaders.generation import Generator
 
 class PromptController:
     def __init__(self,
+                 model: str,
                  top_k: int,
                  mode: str,
                  num_ctx: int,
@@ -24,7 +25,7 @@ class PromptController:
         self.retriever = Retriever(top_k=top_k,
                                    preload_pdf_dirpath=preload_pdf_dirpath,
                                    cleanup_on_init=cleanup_on_init)
-        self.generator = Generator(num_ctx=num_ctx)
+        self.generator = Generator(model=model, num_ctx=num_ctx)
 
         time.sleep(1.0)
 

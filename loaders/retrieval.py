@@ -7,7 +7,6 @@ from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.readers.file import PDFReader
-from ollama._types import ResponseError
 from qdrant_client.models import SparseVector
 
 from .custom_types import RAGChunkAndSrc

@@ -1,9 +1,26 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-from loaders.retrieval import Retriever
-from loaders.generation import Generator
+import ollama
+import questionary
+
 from prompts import PromptController
+
+DEFAULT_MODEL_GENERATION = "gemma4:e4b"
+
+def select_model() -> str:
+    client = ollama.Client()
+    models = [m.model for m in client.list().models if m.model is not None]
+    
+    print(f"Found {len(models)} available models.")
+    if not models:
+        raise RuntimeError("No model available.")
+    
+    return questionary.select(
+        "Select a model:",
+        choices=models,
+        use_shortcuts=True,
+    ).ask()
 
 def main():
     parser = ArgumentParser()
@@ -23,7 +40,10 @@ def main():
 
     answer_path = Path(__file__).parent / "answer.md"
 
+    model = select_model()
+
     controller = PromptController(top_k=args.top_k,
+                                  model=model,
                                   mode=args.mode,
                                   num_ctx=args.num_ctx,
                                   preload_pdf_dirpath=args.preload,
