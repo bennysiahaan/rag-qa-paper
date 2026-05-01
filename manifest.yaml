@@ -1,0 +1,7 @@
+sources:
+  - type: pdf
+    path: ./dev/pdf/
+    glob: "*.pdf"
+  - type: docx
+    path: ./dev/docx/
+    glob: "*.docx"

@@ -10,3 +10,4 @@ llama-index-readers-file
 pydantic
 fastembed-gpu
 questionary
+pyyaml

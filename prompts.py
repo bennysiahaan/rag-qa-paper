@@ -68,11 +68,11 @@ class PromptController:
         return "success"
 
     def listen(self):
+        if self.using_markdown:
+            self.prompt_with_markdown()
+            self.mode = "chat"
+
         while True:
-            if self.using_markdown:
-                self.prompt_with_markdown()
-                break
-            
             print("\nAsk:")
             query = input("> ")
             
